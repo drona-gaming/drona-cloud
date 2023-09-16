@@ -1,0 +1,926 @@
+<!-- index.ejs -->
+<!DOCTYPE html>
+<html>
+    <head>
+    <link rel="icon" href="https://i.imgur.com/NZzyVfS.png">
+    <title>DRONA CloudSync</title>
+    </head>
+
+    <style>
+        html {
+            font-family: Arial;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(180deg, #efd5ff 0%, #515ada 100%);
+            min-height: 100%;
+        }
+
+        h1 {
+            color: #924de7;
+            padding: 10px 10px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 48px;
+            margin: 20px 20px;
+        }
+
+        h2 {
+            color: #fff;
+            padding: 5px 5px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            margin: 10px 10px;
+        }
+
+        p {
+            color: #4a4a4a;
+            padding: 10px 10px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 15px;
+            margin: 20px 20px;
+        }
+
+        q {
+            color: #fff;
+            padding: 10px 10px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 18px;            
+            font-weight: bold;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .custom-file-upload {
+            display: inline-block;
+            background-color: #4097b7;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: none;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            margin: 4px 2px;
+            transition-duration: 0.4s;
+        }
+
+        .custom-file-upload:hover {
+            background-color: #50bfe6;
+            font-size: 20px;
+        }
+
+        .custom-folder-upload {
+            display: inline-block;
+            background-color: #c3732a;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: none;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            margin: 4px 2px;
+            transition-duration: 0.4s;
+        }
+
+        .custom-folder-upload:hover {
+            background-color: #ee8d33;
+            font-size: 20px;
+        }
+
+        #uploadButton {
+            display: inline-block;
+            background-color: #017017;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: none;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            margin: 4px 2px;
+            transition-duration: 0.4s;
+        }
+
+        #uploadButton:hover {
+            background-color: #02ae23;
+            font-size: 20px;
+        }
+
+        .custom-view-files {
+            display: inline-block;
+            background-color: #472081;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: none;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            margin: 4px 2px;
+            transition-duration: 0.4s;
+        }
+
+        .custom-view-files:hover {
+            background-color: #7032cc;
+            font-size: 20px;
+        }
+
+        .custom-delete-allfiles {
+            display: inline-block;
+            background-color: #d13c32;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: none;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            margin: 4px 2px;
+            transition-duration: 0.4s;
+        }
+
+        .custom-delete-allfiles:hover {
+            background-color: #ff2603;
+            font-size: 20px;
+        }
+
+        #progressBarContainer {
+            width: 30%;
+            height: 20px;
+            background-color: #cccccc;
+            display: flex-start;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+            border-radius: 7px;
+        }
+
+        #progressBar {
+            width: 0%;
+            height: 100%;
+            background-color: #049b27;
+            transition: width 0.3s ease-in-out;
+            position: relative;
+            border-radius: 7px;
+            margin-top: 20px;
+        }
+
+        #progressText {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        #fileUploadMessage {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 16px;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .file-list {
+            margin-top: 20px;
+        }
+
+        .file-list-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .file-name {
+            margin-right: 10px;
+        }
+
+        .view-button {
+            display: inline-block;
+            background-color: #72076e;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: none;
+            text-align: center;
+            text-decoration: none;
+            font-size: 14px;
+            margin: 2px 2px;
+            transition-duration: 0.4s;
+        }
+
+        .view-button:hover {
+            font-size: 16px;
+        }
+
+        .delete-button {
+            display: inline-block;
+            background-color: #ff1818;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: none;
+            text-align: center;
+            text-decoration: none;
+            font-size: 14px;
+            margin: 2px 2px;
+            transition-duration: 0.4s;
+        }
+
+        .delete-button:hover {
+            font-size: 16px;
+        }
+
+    /* CSS for the loader */
+        #loader {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.1); /* Semi-transparent background */
+        z-index: 9999;
+        }
+
+        #loader .spinner {
+        position: absolute;
+        top: calc(50% - 150px); /* Adjust the top position to move it slightly above */
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border: 5px solid rgba(255, 255, 255, 0.3); /* Light gray border with increased thickness */
+        border-top: 5px solid #007aff; /* iOS blue color */
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+          0% {
+          transform: translate(-50%, -50%) rotate(0deg);
+          }
+          100% {
+          transform: translate(-50%, -50%) rotate(360deg);
+          }
+        }
+        
+        .drop-area {
+        width: 100%; /* Set the width as needed */
+        max-width: 300px; /* Optionally limit the maximum width */
+        margin: 0 auto; /* This centers the element horizontally */
+        border: 3px dashed #ff2603;
+        padding: 50px;
+        text-align: center;
+        cursor: pointer;
+        margin-bottom: 30px;
+        }
+
+    /* Add a media query for screens smaller than 576px (typical smartphones) */
+        @media (max-width: 576px) {        
+
+        body {
+            font-size: 14px; /* Adjust the base font size for better readability */
+        }
+
+        h1 {
+            font-size: 28px; /* Increase the heading font size */
+        }
+
+        /* Adjust margins and padding for better spacing */
+        h1,
+        h2,
+        p,
+        q,
+        .file-name,
+        .file-size,
+        .custom-file-upload,
+        .custom-folder-upload,
+        #uploadButton,
+        .custom-view-files,
+        .custom-delete-allfiles,
+        #folderDropArea {
+            margin: 10px;
+            padding: 10px;
+        }
+
+        /* Increase the font size of buttons and text */
+        .custom-file-upload,
+        .custom-folder-upload,
+        #uploadButton,
+        .custom-view-files,
+        .custom-delete-allfiles,
+        #folderDropArea {
+        font-size: 14px;
+       }
+
+        /* Adjust the width of buttons and input elements */
+        .custom-file-upload,
+        .custom-folder-upload,
+        #uploadButton,
+        .custom-view-files,
+        .custom-delete-allfiles,
+        #folderDropArea {
+            width: 100%;
+            max-width: 300px; /* Limit the maximum width of elements for better readability */
+        }
+
+        /* Increase the size of the progress bar for smartphones */
+        #progressBarContainer {
+        width: 80%;
+        height: 20px;
+        }
+
+        #progressBar {
+        height: 100%;
+        }
+
+        #progressText {
+        font-size: 16px;
+        }
+    }
+
+    /* Add a media query for screens with small to medium-sized tablets */
+    @media (min-width: 577px) and (max-width: 1024px) {
+
+        body {
+            font-size: 20px; /* Increase the base font size for better readability */
+        }
+
+        h1 {
+            font-size: 40px; /* Increase the heading font size */
+        }
+
+        /* Adjust margins and padding for better spacing */
+        h1,
+        h2,
+        p,
+        q,
+        .file-name,
+        .file-size,
+        .custom-file-upload,
+        .custom-folder-upload,
+        #uploadButton,
+        .custom-view-files,
+        .custom-delete-allfiles,
+        #folderDropArea {
+            margin: 20px;
+            padding: 20px;
+        }
+
+        /* Increase the font size of buttons and text */
+        .custom-file-upload,
+        .custom-folder-upload,
+        #uploadButton,
+        .custom-view-files,
+        .custom-delete-allfiles,
+        #folderDropArea {
+        font-size: 20px;
+       }
+
+        /* Adjust the width of buttons and input elements */
+        .custom-file-upload,
+        .custom-folder-upload,
+        #uploadButton,
+        .custom-view-files,
+        .custom-delete-allfiles,
+        #folderDropArea {
+            width: 100%;
+            max-width: 300px; /* Limit the maximum width of elements for better readability */
+        }
+
+        /* Increase the size of the progress bar */
+        #progressBarContainer {
+        width: 50%; /* You can adjust the width as needed */
+        height: 30px; /* Adjust the height for the progress bar */
+       }
+
+        #progressBar {
+        height: 100%; /* Make the progress bar fill the container vertically */
+        }
+
+        #progressText {
+        font-size: 18px; /* Increase the font size of the progress text */
+        }
+    }
+    </style>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+const socket = io();
+
+socket.on('connect', () => {
+  console.log('Connected to DRONA CloudSync');
+});
+
+socket.on('disconnect', () => {
+  console.log('Disconnected from DRONA CloudSync');
+});
+
+socket.on('fileUploaded', function (fileName) {
+  const fileUploadMessage = document.getElementById('fileUploadMessage');
+  fileUploadMessage.textContent = `${fileName} - Upload Successful ✅`;
+  displayFiles();
+});
+
+// An array to store selected files
+  var selectedFiles = [];
+
+// Function to handle file selection
+  function chooseFile() {
+    const fileInput = document.getElementById('fileInput');
+    fileInput.click();
+  }
+
+  function chooseFolder() {
+    const fileInput = document.getElementById('folderInput');
+    fileInput.click();
+  }
+
+// Function to handle file selection and display in the list
+  function handleFileSelection() {
+    const fileInput = document.getElementById('fileInput');
+    const fileListContainer = document.getElementById('selectedFilesContainer');
+    const files = fileInput.files;
+
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        selectedFiles.push(file);
+
+        const listItem = document.createElement('div');
+        listItem.className = 'file-list-item';
+
+        const fileName = document.createElement('span');
+        fileName.className = 'file-name';
+        fileName.textContent = file.name;
+
+        const fileSize = document.createElement('span');
+        fileSize.className = 'file-size';
+        fileSize.textContent = `(${formatFileSize(file.size)})`;
+
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'delete-button';
+        deleteButton.textContent = 'Delete';
+        deleteButton.addEventListener('click', function () {
+        deleteSelectedFile(i);
+    });
+
+        listItem.appendChild(fileName);
+        listItem.appendChild(fileSize);
+        listItem.appendChild(deleteButton);
+        fileListContainer.appendChild(listItem);
+  }}
+
+// Function to handle file selection and display in the list
+  function handleFolderSelection() {
+    const fileInput = document.getElementById('folderInput');
+    const fileListContainer = document.getElementById('selectedFilesContainer');
+    const files = Array.from(fileInput.files);;
+
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        selectedFiles.push(file);
+
+        const listItem = document.createElement('div');
+        listItem.className = 'file-list-item';
+
+        const fileName = document.createElement('span');
+        fileName.className = 'file-name';
+        fileName.textContent = file.name;
+
+        const fileSize = document.createElement('span');
+        fileSize.className = 'file-size';
+        fileSize.textContent = `(${formatFileSize(file.size)})`;
+
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'delete-button';
+        deleteButton.textContent = 'Delete';
+        deleteButton.addEventListener('click', function () {
+        deleteSelectedFile(i);
+    });
+
+        listItem.appendChild(fileName);
+        listItem.appendChild(fileSize);
+        listItem.appendChild(deleteButton);
+        fileListContainer.appendChild(listItem);
+  }}
+
+// Function to delete a selected file from the list
+  function deleteSelectedFile(index) {
+    selectedFiles.splice(index, 1);
+    displaySelectedFiles();
+  }
+
+// Function to display selected files
+  function displaySelectedFiles() {
+    const fileListContainer = document.getElementById('selectedFilesContainer');
+    fileListContainer.innerHTML = '';
+
+    for (let i = 0; i < selectedFiles.length; i++) {
+        const file = selectedFiles[i];
+        const listItem = document.createElement('div');
+        listItem.className = 'file-list-item';
+
+        const fileName = document.createElement('span');
+        fileName.className = 'file-name';
+        fileName.textContent = file.name;
+
+        const fileSize = document.createElement('span');
+        fileSize.className = 'file-size';
+        fileSize.textContent = `(${formatFileSize(file.size)})`;
+
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'delete-button';
+        deleteButton.textContent = 'Delete';
+        deleteButton.addEventListener('click', function () {
+        deleteSelectedFile(i);
+    });
+
+        listItem.appendChild(fileName);
+        listItem.appendChild(fileSize);
+        listItem.appendChild(deleteButton);
+        fileListContainer.appendChild(listItem);
+  }}
+
+// Function to format file size to a human-readable format
+  function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+// Function to handle file upload
+  async function handleFileUpload() {
+    const fileInput = document.getElementById('fileInput');
+    const totalSize = getTotalSize(selectedFiles);
+
+    // Show the loader
+    loader.style.display = 'block';
+
+    async function uploadFile(file, index) {
+        return new Promise((resolve, reject) => {
+            const formData = new FormData();
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/upload', true);
+
+        xhr.upload.onprogress = function (e) {
+            const loadedSize = getLoadedSize(index, e.loaded);
+            const percent = Math.round((loadedSize / totalSize) * 100);
+            updateProgressBar(percent);
+        }
+
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            console.log(`File ${index + 1} uploaded successfully.`);
+            resolve();
+        } else {
+            console.log(`${xhr.status} ${xhr.responseText}`)
+            console.error(`File ${index + 1} upload failed.`);
+            reject();
+            }
+        };
+
+        formData.append('file', file);
+        xhr.send(formData);
+      });
+    }
+
+    for (let index = 0; index < selectedFiles.length; index++) {
+        try {
+        await uploadFile(selectedFiles[index], index);
+        } catch (error) {
+            const fileUploadMessage = document.getElementById('fileUploadMessage');
+            fileUploadMessage.innerHTML = `${selectedFiles[index].name} - Upload Failed ❌\n
+                                          Only authorized file types are allowed 🔒`;
+            fileUploadMessage.style.whiteSpace = 'pre-line';
+        }
+    }
+
+// Function to calculate the total size of files
+  function getTotalSize(files) {
+    let totalSize = 0;
+    for (let i = 0; i < files.length; i++) {
+    totalSize += files[i].size;
+    }
+    return totalSize;
+  }
+
+// Function to calculate the loaded size
+  function getLoadedSize(index, loaded) {
+    let loadedSize = 0;
+    for (let i = 0; i < index; i++) {
+    loadedSize += selectedFiles[i].size;
+    }
+    loadedSize += loaded;
+    return loadedSize;
+  }
+
+// All files have been uploaded or attempted
+  await displayFiles();
+    loader.style.display = 'none';  
+    selectedFiles = [];
+    displaySelectedFiles();
+    console.log('All files uploaded or attempted.');
+    // displayFiles();
+  }
+
+// Function to display the progress bar
+  function updateProgressBar(percent) {
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    progressBar.style.width = percent + '%';
+    progressText.innerText = percent + '%';
+  }
+
+// Function to display the list of files
+  async function displayFiles() {
+    try {
+      const response = await fetch('/files');
+      if (!response.ok) {
+        throw new Error('Failed to fetch files.');
+      }
+
+      const files = await response.json();
+      const fileListContainer = document.getElementById('uploadedFilesContainer');
+      fileListContainer.innerHTML = '';
+
+      files.forEach(file => {
+        const listItem = document.createElement('div');
+        listItem.className = 'file-list-item';
+
+        const fileName = document.createElement('span');
+        fileName.className = 'file-name';
+        fileName.textContent = file;
+
+        const viewButton = document.createElement('button');
+        viewButton.className = 'view-button';
+        viewButton.textContent = 'View';
+        viewButton.addEventListener('click', function () {
+        viewFile(file);
+        });
+
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'delete-button';
+        deleteButton.textContent = 'Delete';
+        deleteButton.addEventListener('click', function () {
+        deleteFile(file);
+        });
+
+        listItem.appendChild(fileName);
+        listItem.appendChild(viewButton);
+        listItem.appendChild(deleteButton);
+        fileListContainer.appendChild(listItem);
+        });
+    } catch (error) {
+        console.error('Error fetching or processing files:', error);
+    }
+  }
+
+// Function to view a file
+  function viewFile(file) {
+    window.open(`/files/${file}`, '_blank');
+  }
+
+// Function to delete a file
+  async function deleteFile(file) {
+    try {
+      const response = await fetch(`/files/${file}`, { method: 'DELETE' });
+      if (!response.ok) {
+      throw new Error('Failed to delete file.');
+      }
+
+      const result = await response.json();
+      if (result.success) {
+      console.log(`File deleted: ${file}`);
+      await displayFiles(); // Await the asynchronous displayFiles function
+      } else {
+      console.error(`Failed to delete file: ${file}`);
+      }
+      } catch (error) {
+      console.error('Error deleting file:', error);
+    }
+  }
+
+// Function to delete all files
+  async function deleteAllFiles() {
+    // Show confirmation popup
+    if (confirm("Are you sure you want to delete all files?\n\nThis cannot be undone.")) {
+      loader.style.display = 'block';
+        try {
+        // Show the loader
+        const response = await fetch('/files/', { method: 'DELETE' });
+        if (!response.ok) {
+        console.error('Failed to delete all files.');
+        }
+
+        const result = await response.json();
+        if (result.success) {
+        await alert("All files are deleted successfully.");
+        fileUploadMessage.textContent = `Delete Successful ✅`;
+        await displayFiles(); // Await the asynchronous displayFiles function
+        } else {
+        await alert("Failed to delete files, contact Server Admin.");
+        }
+        } catch (error) {
+        console.error('Error deleting all files:', error);
+        }
+        loader.style.display = 'none';
+    }
+  }
+
+document.addEventListener("DOMContentLoaded", function () {
+
+// Check if the user agent indicates a mobile device
+const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+// Add event listeners for drag-and-drop
+  const folderDropArea = document.getElementById('folderDropArea');
+  folderDropArea.addEventListener('dragenter', function (event) {
+    event.preventDefault();
+    folderDropArea.classList.add('hover');
+  });
+
+  folderDropArea.addEventListener('dragleave', function (event) {
+    event.preventDefault();
+    folderDropArea.classList.remove('hover');
+  });
+
+  folderDropArea.addEventListener('dragover', function (event) {
+  event.preventDefault();
+  folderDropArea.classList.add('hover');
+  });
+
+  folderDropArea.addEventListener('click', function (event) {
+  event.preventDefault();
+  chooseFile();
+  });
+
+  // If it's a mobile device, disable the button
+  if (isMobileDevice) {
+  folderDropArea.style.display = "none";
+  } else {
+  // If it's not a mobile device, remove the 'disabled' attribute to enable the button
+  }
+
+folderDropArea.addEventListener('drop', handleFolderDrop);
+
+// Function to handle folder drop
+  function handleFolderDrop(event) {
+    event.preventDefault();
+    const folderDropArea = document.getElementById('folderDropArea');
+    folderDropArea.classList.remove('hover');
+
+    const fileListContainer = document.getElementById('selectedFilesContainer');
+    const folders = Array.from(event.dataTransfer.items);
+
+    for (let i = 0; i < folders.length; i++) {
+      const folder = folders[i].webkitGetAsEntry();
+      if (folder) {
+      traverseFolder(folder);
+      }
+    }
+
+  async  function traverseFolder(folder) {
+    if (folder.isFile) {
+    if (folder.files) {
+
+    //selectedFiles.push(folder.file);
+    for (let i = 0; i < folder.files.length; i++) {
+    readFile(folder.files[i]);
+    }
+    } else if (folder.file) {
+      console.log('it came');
+      folder.file(function (file) {
+      console.log('File name:', file.name);
+      console.log('File size:', file.size, 'bytes');
+      console.log('File type:', file.type);
+    readFile(file);
+    }); 
+    }
+    } else if (folder.isDirectory) {
+    const dirReader = folder.createReader();
+    const entries = await readEntries(dirReader);
+    entries.forEach(function (entry) {
+    if (entry.isFile) {
+    
+    // Handle file within the directory
+    entry.file(function (file) {
+    readFile(file);
+    });
+    } else if (entry.isDirectory) {
+    
+    // Recursively traverse subdirectories
+    traverseFolder(entry);
+    }
+    });
+    }
+  }
+
+  function readFile(file) {
+    selectedFiles.push(file);
+    let i = selectedFiles.indexOf(file);
+
+    const listItem = document.createElement('div');
+    listItem.className = 'file-list-item';
+
+    const fileName = document.createElement('span');
+    fileName.className = 'file-name';
+    fileName.textContent = file.name;
+
+    const fileSize = document.createElement('span');
+    fileSize.className = 'file-size';
+    fileSize.textContent = `(${formatFileSize(file.size)})`;
+
+    const deleteButton = document.createElement('button');
+    deleteButton.className = 'delete-button';
+    deleteButton.textContent = 'Delete';
+    deleteButton.addEventListener('click', function () {
+    deleteSelectedFile(i);
+    });
+
+    listItem.appendChild(fileName);
+    listItem.appendChild(fileSize);
+    listItem.appendChild(deleteButton);
+    fileListContainer.appendChild(listItem);
+
+    // Append the listItem to the selected files container
+    selectedFilesContainer.appendChild(listItem);
+  }
+
+  async function readEntries(dirReader) {
+    return new Promise(function (resolve, reject) {
+      dirReader.readEntries(function (entries) {
+      resolve(entries);
+    }, reject);
+    });
+  }}
+});
+</script>
+
+<body>
+<div>
+    <img src="https://i.imgur.com/ZEwDnup.png" style="margin-right: 90px;">
+</div>
+
+    <h1 style="margin-top: -15px; margin-bottom: 30px;">CloudSync UpLink</h1>
+
+<div id="loader">
+  <div class="spinner"></div>
+</div>
+<div id="folderDropArea" class="drop-area">
+  <q>Drag & Drop floders/files fere</q>
+</div>
+
+<input type="file" id="folderInput" onchange="handleFolderSelection()" style="display: none;" webkitdirectory multiple/>
+<label for="folderInput" class="custom-folder-upload">Select Folder</label>
+<input type="file" id="fileInput" onchange="handleFileSelection()" style="display: none;" multiple />
+<label for="fileInput" class="custom-file-upload">Select File</label>
+<button id="uploadButton" onclick="handleFileUpload()">Upload</button>
+
+<div id="progressBarContainer">
+    <div id="progressBar">
+    <div id="progressText"></div>
+    </div>
+</div>
+
+<div id="fileUploadMessage"></div>
+<div id="fileListContainer"></div>
+
+<!-- Add a heading for Uploaded Files -->
+<h2>Uploaded Files</h2>
+<div id="uploadedFilesContainer"></div>
+
+<!-- Add a heading for Selected Files -->
+<h2>Selected Files</h2>
+<div id="selectedFilesContainer"></div>
+
+<button onclick="displayFiles()" class="custom-view-files">View Files</button>
+<button onclick="deleteAllFiles()" class="custom-delete-allfiles">Delete All Files</button>
+
+<div id="consoleText"></div>
+</body>
+
+<footer>
+    <p>&#169; DRØNÀ Gaming</p>
+</footer>
+</html>
