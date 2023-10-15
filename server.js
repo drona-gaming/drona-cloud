@@ -14,7 +14,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'client_end'));
 
 // Define server upload path here
-const uploadDirectory = 'D:/CloudSync';
+const uploadDirectory = 'E:/CloudSync';
 
 // Define server ip lookup here
 const ifaces = os.networkInterfaces();
@@ -152,7 +152,7 @@ app.get('/files', (req, res) => {
 });
 
 // Route to delete a file
-app.delete('/files/:filename', (req, res) => {
+app.post('/files/:filename', (req, res) => {
   const filename = req.params.filename;
   const filePath = path.join(uploadDirectory, filename);  
   fs.unlink(filePath, (err) => {
@@ -165,7 +165,7 @@ app.delete('/files/:filename', (req, res) => {
 });
 
 // Route to delete all files
-app.delete('/files', (req, res) => {
+app.post('/files', (req, res) => {
   fs.readdir(uploadDirectory, (err, files) => {
     if (err) {
       console.error('Error deleting files:', err);

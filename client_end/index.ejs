@@ -704,7 +704,7 @@ socket.on('fileUploaded', function (fileName) {
 // Function to delete a file
   async function deleteFile(file) {
     try {
-      const response = await fetch(`/files/${file}`, { method: 'DELETE' });
+      const response = await fetch(`/files/${file}`, { method: 'POST' });
       if (!response.ok) {
       throw new Error('Failed to delete file.');
       }
@@ -713,6 +713,7 @@ socket.on('fileUploaded', function (fileName) {
       if (result.success) {
       console.log(`File deleted: ${file}`);
       await displayFiles(); // Await the asynchronous displayFiles function
+      fileUploadMessage.textContent = `Delete Successful ✅`;
       } else {
       console.error(`Failed to delete file: ${file}`);
       }
@@ -728,7 +729,7 @@ socket.on('fileUploaded', function (fileName) {
       loader.style.display = 'block';
         try {
         // Show the loader
-        const response = await fetch('/files/', { method: 'DELETE' });
+        const response = await fetch('/files/', { method: 'POST' });
         if (!response.ok) {
         console.error('Failed to delete all files.');
         }
