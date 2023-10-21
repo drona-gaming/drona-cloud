@@ -1,3 +1,6 @@
+// Suppress deprecation warnings
+process.noDeprecation = true;
+
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
@@ -56,6 +59,13 @@ if (!fs.existsSync(uploadDirectory)) {
 // Middleware
 app.use('/static', express.static(uploadDirectory));
 
+// Add this part to extract the client IP address in IIS
+app.use((req, res, next) => {
+  const xff = req.headers['x-forwarded-for'];
+  const clientIP = xff ? xff.split(',')[0] : req.socket.remoteAddress;
+  next();
+});
+
 // Define the allowed file types
 const allowedFileTypes = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp', '.svg', 
                           '.mp4', '.avi', '.mkv', '.mov', '.wmv', '.flv', '.mpeg', '.webm', 
@@ -83,7 +93,6 @@ const upload = multer({ storage, fileFilter: (req, file, callback) => {
     }
   } 
 });
-
 
 // UpLink server here
 app.get('/', function (req, res) {
@@ -138,7 +147,6 @@ app.post('/upload', upload.single('file'), (req, res) => {
   io.emit('fileUploaded', req.file.originalname);
     res.status(200).send('File uploaded successfully.');
 });
-
 
 // Route to get the list of files
 app.get('/files', (req, res) => {
