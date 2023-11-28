@@ -1,15 +1,17 @@
-// Suppress deprecation warnings
-process.noDeprecation = true;
-
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
 const { Server } = require('socket.io');
+const https = require('https');
+const basicAuth = require('express-basic-auth');
 
 // Define server port here
 const applicationPort = process.env.PORT || 3000;
+
+// Define server domain here
+const allowedDomain = 'Your_Domain:3000'; // Replace with your actual domain
 
 // Define server path here
 const app = express();
@@ -17,7 +19,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'client_end'));
 
 // Define server upload path here
-const uploadDirectory = 'E:/CloudSync';
+const uploadDirectory = 'D:/CloudSync';
 
 // Define server ip lookup here
 const ifaces = os.networkInterfaces();
@@ -47,6 +49,12 @@ Object.keys(ifaces).forEach(function (ifname) {
     });
 });
 
+// Define your Windows user credentials
+const users = {
+  'Your_User_ID': 'Your_Password',
+  // Add more users as needed
+};
+
 // Create the upload directory if it doesn't exist
 if (!fs.existsSync(uploadDirectory)) {
   try {
@@ -57,14 +65,13 @@ if (!fs.existsSync(uploadDirectory)) {
 }
 
 // Middleware
-app.use('/static', express.static(uploadDirectory));
+app.use(basicAuth({
+  users,
+  challenge: true,
+  unauthorizedResponse: 'Access Denied!',
+}));
 
-// Add this part to extract the client IP address in IIS
-app.use((req, res, next) => {
-  const xff = req.headers['x-forwarded-for'];
-  const clientIP = xff ? xff.split(',')[0] : req.socket.remoteAddress;
-  next();
-});
+app.use('/static', express.static(uploadDirectory));
 
 // Define the allowed file types
 const allowedFileTypes = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp', '.svg', 
@@ -94,7 +101,28 @@ const upload = multer({ storage, fileFilter: (req, file, callback) => {
   } 
 });
 
-// UpLink server here
+// SSL certificate configuration
+const pfxFilePath = path.join(__dirname, 'certificate.pfx'); // Assuming certificate.pfx is in the root folder
+const pfxPassword = 'Certificate_Password'; // Replace with your actual password
+
+const options = {
+  pfx: fs.readFileSync(pfxFilePath),
+  passphrase: pfxPassword,
+};
+
+// Create HTTPS server
+const server = https.createServer(options, app);
+
+// Configure HTTPS server
+app.use((req, res, next) => {
+  const host = req.headers.host;
+  if (host === allowedDomain) {
+    return next();
+  } else {
+    res.status(403).send('Forbidden: Access denied for this domain.');
+  }
+});
+
 app.get('/', function (req, res) {
     res.render('index', {
         allOSIps: allOSIps,
@@ -102,8 +130,9 @@ app.get('/', function (req, res) {
     });
 });
 
-const server = app.listen(applicationPort, () => {
-    console.log('CloudSync UpLink Successful');
+// UpLink server here
+server.listen(applicationPort, () => {
+    console.log(`CloudSync UpLink successful on https://${allowedDomain}`);
 
     allOSIps.forEach(function (ip) {
         console.log(ip.name + ' - ' + ip.address + ':' + applicationPort);
@@ -119,7 +148,7 @@ io.on('connection', (socket) => {
   console.log(`New Client Connected at ${connectTime}.`);
 
   // Get client IP address
-  const clientIP = socket.handshake.headers['x-forwarded-for'] || socket.handshake.address;
+  const clientIP = socket.handshake.address;
 
   // Get client browser name and version
   const userAgent = socket.handshake.headers['user-agent'];

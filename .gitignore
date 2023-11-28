@@ -1,3 +1,4 @@
 img/
 node_modules/
-web.config
+certificate.pfx
+certificate_key.txt
